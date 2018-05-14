@@ -10,7 +10,7 @@ class TestLogicExpression extends FlatSpec with Matchers with GivenWhenThen with
 
   behavior of "Logic expressions (AND,OR,NOT)"
   
-  it should "only return true if both expressions are true, in other words, AND operation" in {
+  it should "only return true if both expressions are true  (AND operator)" in {
     //00
     val and0   = new AND_Expression(BoolValue(false),BoolValue(false))
     and0.eval() should be (BoolValue(false))
@@ -25,7 +25,7 @@ class TestLogicExpression extends FlatSpec with Matchers with GivenWhenThen with
     and3.eval() should be (BoolValue(true))
   }
 
-  it should "return true if at least one expression is true, in other words, OR operation" in {
+  it should "return true if at least one expression is true ( OR operator)" in {
     //00
     val or0   = new OR_Expression(BoolValue(false),BoolValue(false))
     or0.eval() should be (BoolValue(false))
@@ -40,7 +40,7 @@ class TestLogicExpression extends FlatSpec with Matchers with GivenWhenThen with
     or3.eval() should be (BoolValue(true))
   }
 
-  it should "return true if the expression is false and vice versa,  a.k.a, NOT operation" in {
+  it should "return true if the expression is false         (NOT operator)" in {
     //0
     val not0   = new NOT_Expression(BoolValue(false))
     not0.eval() should be (BoolValue(true))
