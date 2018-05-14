@@ -20,8 +20,31 @@ class SubExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
 
   override
   def eval() : Value = {
-    var value: AddExpression = new AddExpression( lhs, new IntValue(-1 * rhs.eval().asInstanceOf[IntValue].value) )
-    return value.eval
+    var sum: AddExpression = new AddExpression( lhs, new IntValue(-1 * rhs.eval().asInstanceOf[IntValue].value) )
+    return sum.eval
+  }
+}
+
+class MulExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
+
+  override
+  def eval() : Value = {
+    val v1 : IntValue = lhs.eval().asInstanceOf[IntValue]
+    val v2 : IntValue = rhs.eval().asInstanceOf[IntValue]
+
+    return new IntValue(v1.value * v2.value)
+  }
+}
+
+class DivExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
+
+  override
+  def eval() : Value = {
+    val v1: IntValue = rhs.eval().asInstanceOf[IntValue]
+    if(v1.eval == IntValue(0))
+        throw new oberon.InvalidArgument("Invalid rhs for requested operation")
+    
+    return new IntValue(lhs.eval.asInstanceOf[IntValue].value / v1.value)
   }
 }
 
@@ -30,8 +53,8 @@ class SgExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, 
 
   override
   def eval: Value = {
-    var value: LeExpression = new LeExpression(lhs,rhs)
-    if( value.eval == BoolValue(true) )
+    var lessEqual: LeExpression = new LeExpression(lhs,rhs)
+    if( lessEqual.eval == BoolValue(true) )
         return BoolValue(false)
     else
         return BoolValue(true)
@@ -44,8 +67,8 @@ class SlExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, 
 
   override
   def eval: Value = {
-    var value: GeExpression = new GeExpression(lhs,rhs)
-    if( value.eval == BoolValue(true) )
+    var greaterEqual: GeExpression = new GeExpression(lhs,rhs)
+    if( greaterEqual.eval == BoolValue(true) )
         return BoolValue(false)
     else
         return BoolValue(true)
