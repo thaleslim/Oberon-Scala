@@ -52,6 +52,16 @@ class While(val cond: Expression, val command: Command) extends Command {
 }
 // TODO: Implement FOR, print(), readInt(), readBool()
 // TODO: Ask proffessor about read functions
+ 
+
+class For(val cont: Command ,cond: Expression, val fcommand: Command, val com: Command) extends While(cond,com) {
+  override
+  def run() : Unit = {
+    cont.run()
+    val w1 = new While(cond, new BlockCommand(List(fcommand,com)))
+    w1.run()
+  }
+}
 
 
 /**
