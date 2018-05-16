@@ -43,4 +43,38 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
       case _       => 5 should be (1)  
     }
   }
+  
+  it should "show x=10 after a for(x=0;x<10;x++)" in{
+    val d1 = new Declaration("x") //x;
+    val a1 = new Assignment("x",IntValue(0)) //x=0
+    val a2 = new Assignment("x",new AddExpression(new VarRef("x"),IntValue(1)))
+    val c1 = new SlExpression(new VarRef("x"),IntValue(10))
+    val f1 = new For(new BlockCommand(List(d1,a1)),c1,new BlockCommand(List(a2)), new BlockCommand(List()))
+    
+    f1.run()
+    
+    val y = lookup("x")
+    y match{
+        case Some(v) => v.eval() should be (IntValue(10))
+        case _ => 0 should be (1)
+    }
+  }
+  
+  it should "show x=1 after a for(x=10;x>1;x--)" in{
+  val d1 = new Declaration("x") 
+  val a1 = new Assignment ("x",IntValue(10))
+  val a2 = new Assignment ("x", new SubExpression(new VarRef("x"),IntValue(1)))
+  val c1 = new SgExpression(new VarRef("x"),IntValue(1))
+  val f1 = new For(new BlockCommand(List(d1,a1)),c1,new BlockCommand(List(a2)),new BlockCommand(List()))
+  
+  f1.run()
+  
+  val m = lookup("x")
+  m match{
+    case Some(v) => v.eval() should be (IntValue(1))
+    case _ => 0 should be (1)
+  }
+  
+  }
 }
+
