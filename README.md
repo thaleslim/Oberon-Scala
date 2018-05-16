@@ -1,6 +1,7 @@
 # Oberon-Scala
 An implementation of the Oberon language in Scala
 
+:octocat: Append and modify this list as you make changes to this repository
 - [ ] unchecked example
 - [x] checked example
 
