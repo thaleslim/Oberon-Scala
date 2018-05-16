@@ -58,7 +58,7 @@ class For(val cont: Command ,cond: Expression, val fcommand: Command, val com: C
   override
   def run() : Unit = {
     cont.run()
-    val w1 = new While(cond, new BlockCommand(List(fcommand,com)))
+    val w1 = new While(cond, new BlockCommand(List(com,fcommand)))
     w1.run()
   }
 }

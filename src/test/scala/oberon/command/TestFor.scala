@@ -31,7 +31,7 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
     val a2 = new Assignment("soma",new AddExpression(new VarRef("soma"), new VarRef("x")))
     val a3 = new Assignment("x", IntValue(1))
     val a4 = new Assignment("x",new AddExpression(new VarRef("x"),IntValue(1)))
-    val cond = new SlExpression(new VarRef("x"), IntValue(10))
+    val cond = new SlExpression(new VarRef("x"), IntValue(11))
     val f1 = new For(new BlockCommand(List(d1,a3)),cond, new BlockCommand(List(a4)), new BlockCommand(List(a2)))
 
     a1.run()
@@ -39,7 +39,7 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
 
     val res = lookup("soma")
     res match {
-      case Some(v) => v.eval() should be (IntValue(66))
+      case Some(v) => v.eval() should be (IntValue(55))
       case _       => 5 should be (1)  
     }
   }
