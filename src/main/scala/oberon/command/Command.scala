@@ -50,10 +50,28 @@ class While(val cond: Expression, val command: Command) extends Command {
     }
   }
 }
-// TODO: Implement FOR, print(), readInt(), readBool()
+// TODO: Implement readInt(), readBool()
 // TODO: Ask proffessor about read functions
 
+//    for(command;cond;command)
+class For(var previous: Command, cond: Expression, command: Command) extends While(cond,command) {
+  override
+  def run() : Unit = {
+    // Creates a clone of the current scope' environment variables
+    var before = stack.top.clone
 
+    // Run all this scope' commands
+    previous.run
+
+    val whileCom = new While(cond,command)
+    // Run the Blockcomand as many times as the conditions allows
+    whileCom.run
+
+    // Verifies if the variables mappings existed before this command' execution
+    //        in order to remove this variables from the main scope
+    stack.push(stack.pop.filter{ p: Tuple2[String,oberon.expression.Value] => if( before.get(p._1) == None ) false else true })
+  }
+}
 /**
     If(cond) Then command
   */
@@ -98,4 +116,13 @@ class Print(val exp: Expression) extends Command {
     print(exp.eval())
   }
 
+}
+
+class Procedure(val id: String, val commands: BlockCommand) extends Command{
+    override
+    def run() : Unit = {
+        push()
+        commands.run()
+        pop()
+    }
 }

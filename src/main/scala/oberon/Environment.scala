@@ -25,8 +25,8 @@ object Environment {
     stack.top += (id -> value)
   }
 
-  def lookup(id: String) : Option[Value] =
-    if(stack.isEmpty) None else Some(stack.top(id))
+  // Previous solution generated a Exception whenever you'd request for a non-existent id
+  def lookup(id: String) : Option[Value] = stack.top.get(id)
 
   def clear() : Unit = { stack.clear() } 
 }
