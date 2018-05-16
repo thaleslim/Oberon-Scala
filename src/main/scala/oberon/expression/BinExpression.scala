@@ -1,7 +1,6 @@
 package oberon.expression
 
 abstract class BinExpression(val lhs: Expression, val rhs: Expression) extends Expression {
-
 }
 
 class AddExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
@@ -45,6 +44,18 @@ class DivExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
         throw new oberon.InvalidArgument("Invalid rhs for requested operation")
     
     return new IntValue(lhs.eval.asInstanceOf[IntValue].value / v1.value)
+  }
+}
+
+class ModExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
+
+  override
+  def eval() : Value = {
+    val v1: IntValue = rhs.eval().asInstanceOf[IntValue]
+    if(v1.eval == IntValue(0))
+        throw new oberon.InvalidArgument("Invalid rhs for requested operation")
+    
+    return new IntValue(lhs.eval.asInstanceOf[IntValue].value % v1.value)
   }
 }
 
@@ -125,7 +136,6 @@ class NeqExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
 
 }
 
-
 class AND_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
   override
@@ -137,7 +147,6 @@ class AND_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs
   }
 }
 
-
 class OR_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
   override
@@ -148,7 +157,6 @@ class OR_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
     return new BoolValue(v1.value || v2.value)
   }
 }
-
 
 class NOT_Expression(v1: Expression) extends Expression {
 

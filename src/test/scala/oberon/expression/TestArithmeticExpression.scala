@@ -56,6 +56,17 @@ class TestArithmeticExpression extends FlatSpec with Matchers with GivenWhenThen
     result.eval should be (IntValue(2000))
   }
 
+  it should "return value X%Y in Mod(IntValue(X), IntValue(Y)).eval" in {
+    result   = new ModExpression(IntValue(5), IntValue(10))
+    result.eval should be (IntValue(5))
+    
+    result   = new ModExpression(IntValue(10), IntValue(2)) 
+    result.eval should be (IntValue(0))
+    
+    result   = new ModExpression(IntValue(2000), IntValue(1))
+    result.eval should be (IntValue(0))
+  }
+
   it should "lead to an exception in Add(IntValue(X), BoolValue(Y)).eval, being X a Integer and Y a Boolean" in {
     result = new AddExpression(IntValue(5), BoolValue(false))
 
