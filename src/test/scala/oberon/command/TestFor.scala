@@ -39,8 +39,8 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
     d1.run()
     f1.run()
 
-    val sumResult = lookup("soma")
-    sumResult match {
+    val sum = lookup("soma")
+    sum match {
       case Some(v) => v.eval() should be (IntValue(55))
       case _       => -1 should be (0)  
     }
@@ -62,8 +62,8 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
     d1.run()
     f1.run()
     
-    val result = lookup("x")
-    result match {
+    val sum = lookup("x")
+    sum match {
         case Some(v) => v.eval() should be (IntValue(10))
         case _ => -1 should be (0)
     }
@@ -79,8 +79,8 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
     d1.run()
     f1.run()
     
-    val result = lookup("x")
-    result match {
+    val sub = lookup("x")
+    sub match {
         case Some(v) => v.eval() should be (IntValue(1))
         case _ => -1 should be (0)
     }
