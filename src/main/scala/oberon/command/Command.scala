@@ -52,7 +52,6 @@ class While(val cond: Expression, val command: Command) extends Command {
 }
 // TODO: Implement readInt(), readBool()
 // TODO: Ask proffessor about read functions
-
 //    for(command;cond;command)
 class For(var previous: Command, cond: Expression, command: Command) extends While(cond,command) {
   override
