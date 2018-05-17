@@ -2,7 +2,10 @@ package oberon.command
 
 import oberon.Environment._
 
+// import oberon.expression._
+
 import oberon.expression.Expression
+import oberon.expression.IntValue
 import oberon.expression.BoolValue
 import oberon.expression.Undefined
 
@@ -17,7 +20,6 @@ class BlockCommand(val cmds: List[Command]) extends Command {
   }
 }
 
-// TODO: Ask teacher about declaration method and it's relation to the Map
 class Declaration(val id: String) extends Command {
   override
   def run() : Unit = {
@@ -50,8 +52,7 @@ class While(val cond: Expression, val command: Command) extends Command {
     }
   }
 }
-// TODO: Implement readInt(), readBool()
-// TODO: Ask proffessor about read functions
+
 //    for(command;cond;command)
 class For(var previous: Command, cond: Expression, command: Command) extends While(cond,command) {
   override
@@ -77,9 +78,6 @@ class For(var previous: Command, cond: Expression, command: Command) extends Whi
 class IfThen(val cond: Expression, val command: Command) extends Command {
   override
   def run() : Unit = {
-    // println("Condicao:" + cond)
-    // println("Environment: ")
-    // println(stack)
 
     val v = cond.eval.asInstanceOf[BoolValue]
 
@@ -96,9 +94,6 @@ class IfThen(val cond: Expression, val command: Command) extends Command {
 class IfThenElse( cond: Expression, commandTrue: Command, val commandFalse: Command) extends IfThen(cond,commandTrue) {
   override
   def run() : Unit = {
-    // println("Condicao:" + cond)
-    // println("Environment: ")
-    // println(stack)
 
     val v = cond.eval.asInstanceOf[BoolValue]
 
@@ -112,12 +107,18 @@ class IfThenElse( cond: Expression, commandTrue: Command, val commandFalse: Comm
 class Print(val exp: Expression) extends Command {
   override
   def run() : Unit = {
-    print(exp.eval())
+    exp.eval() match {
+        case IntValue(value) => print(value)
+        case BoolValue(value) => print(value)
+        case Undefined()       => print()
+        case _ => throw new oberon.InvalidArgument("oops a error occurred: Unexpected Value for print()")
+    }
   }
 
 }
-
-class Procedure(val id: String, val commands: BlockCommand) extends Command{
+// TODO: a chamada do procedimento(comando) e a declaração(interface)
+// procedure id( (id,value)* ) commands
+class Procedure(id: String, val commands: BlockCommand, val param: Expression*){
     override
     def run() : Unit = {
         push()

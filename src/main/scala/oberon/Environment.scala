@@ -8,7 +8,9 @@ import oberon.expression.Value
 import oberon.expression.Expression
 
 object Environment {
-  var stack = new Stack[Map[String, Value]] () 
+  // TODO: Tuple2 armazenando tipo e valor
+  // ReadInt ReadBool === scanf predef
+  var stack  = new Stack[Map[String, Value]]()
 
   def push() {
     stack.push(new HashMap[String, Value]())
@@ -26,7 +28,15 @@ object Environment {
   }
 
   // Previous solution generated a Exception whenever you'd request for a non-existent id
-  def lookup(id: String) : Option[Value] = stack.top.get(id)
+  // TODO: caso não encontre no escopo atual, buscar nos outros escopos (Iterator)
+  def lookup(id: String) : Option[Value] = {
+    if(stack.isEmpty)
+        None 
+    else 
+        stack.top.get(id) // match { 
+            // case None => Somente se não encontrar em nenhum escopo
+        // }
+  }
 
   def clear() : Unit = { stack.clear() } 
 }
