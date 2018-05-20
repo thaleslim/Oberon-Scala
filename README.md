@@ -15,7 +15,7 @@ TODOs:
 
  * Adapt to fit the Scope' changes.
  
- - [ ] Global Variables && Assignment: 
+ - [x] Global Variables && Assignment: 
 
  * Create a Dedicated Scope to Global Variables; 
  * Assignment method should verify if the variable already exists, if it does Throw a Exception;
