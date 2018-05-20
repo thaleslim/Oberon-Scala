@@ -21,7 +21,7 @@ object Environment {
 
   // Gets the current scope
   def current() = {
-    if(program.isEmpty)
+    if( program.isEmpty )
         program.push(new Stack[Map[String, Variable]])
     program.top
   }
@@ -37,29 +37,53 @@ object Environment {
   }
 
   def map(id: String, value: Value) {
-    if(current.isEmpty)
-      push()
-    
-    current.top += (id -> (new Variable)(value) )
+    if( program.isEmpty ) //Global Variable
+        global += ( id -> (new Variable)(value) )
+    else{
+        if( current.isEmpty )
+            push()
+        
+        if( exist(id) ) {
+            if( !global.isEmpty ) global.get(id) match {
+                case Some(thing) => global += ( id -> (new Variable)(value) )
+                case None => update(id,value) }
+            else update(id,value) }
+        else current.top += (id -> (new Variable)(value) )
+    }
   }
 
-  // TODO: caso não encontre no escopo atual, buscar nos outros escopos (Iterator)
-  def lookup(id: String) : Option[Value] = {
-    if(program.isEmpty || current.isEmpty)
+  private def update(id: String, value: Value): Unit = {
+    var it = current.iterator
+    var map: Map[String,Variable] = null
+    it.foreach{ target: Map[String, Variable] => if( map == null && target.get(id) != None ){ map = target }}
+    if( map != null )
+        map += ( id -> (new Variable)(value) )
+  }
+
+  def lookup(id: String, force: Boolean = true) : Option[Value] = {
+    if( ( program.isEmpty || current.isEmpty ) && global.isEmpty )
         None
     else
         global.get(id) match {
-            case None => current.top.get(id) match {
-                case None => None
-                // Search inside current for id
-                //{
-                //
-                //}
+            case None => if( program.isEmpty || current.isEmpty ) None
+                else current.top.get(id) match {
+                case None => {
+                    if(!force) None
+                    var it = current.iterator
+                    var res: Option[Variable] = None
+                    it.foreach{ map: Map[String, Variable] => if(res == None){res = map.get(id)}}
+                    res match {
+                        case Some(variable) => Some(variable.value)
+                        case None => None
+                    }
+                }
                 case Some(variable) => Some(variable.value)
             }
             case Some(variable) => Some(variable.value)
         }
   }
 
-  def clear() : Unit = { program.clear() }
+  def exist(id: String) : Boolean = lookup(id,false) match {case Some(v) => true; case None => false}
+
+  def clear() : Unit = { program.clear(); global.clear(); functions.clear() }
 }

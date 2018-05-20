@@ -12,9 +12,7 @@ case class Undefined() extends Value
 case class IntValue(value: Integer) extends Value
 case class BoolValue(value: Boolean) extends Value
 
-case class Variable() extends Value with Ordered[Variable]{
-    var valueType: String = "Undefined"
-    var value: Value = new Undefined()
+case class Variable( var value: Value = new Undefined(), var valueType: String = "Undefined" ) extends Value with Ordered[Variable]{
 
     def apply(info: Value): Variable = this.assign(info)
 
@@ -36,7 +34,11 @@ case class Variable() extends Value with Ordered[Variable]{
                     this.value = new BoolValue(value)
                 else throw new oberon.InvalidArgument("Invalid Type")
 
-            case Undefined() => {}
+            case Undefined() => 
+                if( this.valueType == "Undefined" )
+                    this.value = new Undefined()
+                else throw new oberon.InvalidArgument("Invalid Type")
+            
             case _ => throw new  oberon.InvalidArgument("Unexpected Type")
         }
         return this

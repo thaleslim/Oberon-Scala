@@ -21,8 +21,8 @@ class BlockCommand(val cmds: List[Command]) extends Command {
 class Declaration(val id: String) extends Command {
   override
   def run() : Unit = {
-    var variable = new Assignment(id, new Undefined())
-    variable.run
+    if( exist(id) ) throw new oberon.InvalidArgument("Double Declaration")
+    map(id, new Undefined())
   }
 }
 
@@ -30,6 +30,7 @@ class Assignment(val id: String, val expression: Expression) extends Command {
 
   override
   def run() : Unit = {
+    //if( !exist(id) ) throw new oberon.InvalidArgument("Undeclared Variable")
     map(id, expression.eval())
   }
 
@@ -55,8 +56,8 @@ class While(val cond: Expression, val command: Command) extends Command {
 class For(var previous: Command, cond: Expression, command: Command) extends While(cond,command) {
   override
   def run() : Unit = {
-    // Creates a clone of the current scope' environment variables
-    var before = stack.top.clone
+    //Creates a new scope inside the main function' scope
+    push()
 
     // Run all this scope' commands
     previous.run
@@ -65,9 +66,8 @@ class For(var previous: Command, cond: Expression, command: Command) extends Whi
     // Run the Blockcomand as many times as the conditions allows
     whileCom.run
 
-    // Verifies if the variables mappings existed before this command' execution
-    //        in order to remove this variables from the main scope
-    stack.push(stack.pop.filter{ p: Tuple2[String,oberon.expression.Value] => if( before.get(p._1) == None ) false else true })
+    //Clear the scope used
+    pop()
   }
 }
 /**
