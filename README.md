@@ -7,24 +7,33 @@ An implementation of the Oberon language in Scala
 
 TODOs:
 
-- [ ] Declaration method:
+ - [ ] Scopes:
 
- * Is it OK? 
- * Should something be changed in the Environment' Map?
- * Possible lack of information
+ * Change from only storing the Variable' Value to a Tuple that stores its Current Value and Declaration Type.
+ 
+ - [ ] Declaration method:
 
-- [ ] ReadInt:
+ * Adapt to fit the Scope changes.
+ 
+ - [ ] Global Variables && Assignment: 
 
- * User input?
-        
-- [ ] ReadBool:
+ * Create a Dedicated Scope to Global Variables; 
+ * Assignment method should verify if the variable already exists, if it does Throw a Exception;
+ * Two variables with the same name in the same scope shouldn't be allowed;
+ * The current behaviour is to override the Value.
+ 
+ - [ ] ReadInt && ReadBool:
+ 
+ * Create Scanf() like method.
 
- * User input?
+ - [ ] FunctionsDeclaration(Class) && FunctionsCall(Expression):
+ 
+ * Needs a way to connect the name to the CommandBlock, Map structure.
+ 
+ - [ ] ProceduresDeclaration(Class) && ProcedureCall(Comand):
+ 
+ * Needs a way to connect the name to the CommandBlock, Map structure.
 
-- [ ] Global Variables: 
-
- * How should we approach them ?
- * Should we have a Storage space dedicated to them?
- * Should we insert them in every scope?
-
-- [ ] Procedures
+ - [ ] Exceptions:
+ 
+ * Create more Exceptions, like InvalidArgument, to have a more direct Error Message.
