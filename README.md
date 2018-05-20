@@ -7,13 +7,13 @@ An implementation of the Oberon language in Scala
 
 TODOs:
 
- - [ ] Scopes:
+ - [x] Scope:
 
- * Change from only storing the Variable' Value to a Tuple that stores its Current Value and Declaration Type.
+ * Change from only storing the Variable' Value to something that stores its Current Value and its Data Type.
  
- - [ ] Declaration method:
+ - [x] Declaration method:
 
- * Adapt to fit the Scope changes.
+ * Adapt to fit the Scope' changes.
  
  - [ ] Global Variables && Assignment: 
 
