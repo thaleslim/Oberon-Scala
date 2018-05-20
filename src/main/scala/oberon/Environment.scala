@@ -5,15 +5,14 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 
 import oberon.expression.Value
+import oberon.expression.Variable
 import oberon.expression.Expression
 
 object Environment {
-  // TODO: Tuple2 armazenando tipo e valor
-  // ReadInt ReadBool === scanf predef
-  var stack  = new Stack[Map[String, Value]]()
+  var stack  = new Stack[Map[String, Variable]]()
 
   def push() {
-    stack.push(new HashMap[String, Value]())
+    stack.push(new HashMap[String, Variable]())
   }
 
   def pop() {
@@ -24,18 +23,18 @@ object Environment {
     if(stack.isEmpty) {
       push()
     }
-    stack.top += (id -> value)
+    stack.top += (id -> (new Variable)(value) )
   }
 
-  // Previous solution generated a Exception whenever you'd request for a non-existent id
   // TODO: caso não encontre no escopo atual, buscar nos outros escopos (Iterator)
-  def lookup(id: String) : Option[Value] = {
+  def lookup(id: String, force: Boolean = true) : Option[Value] = {
     if(stack.isEmpty)
-        None 
-    else 
-        stack.top.get(id) // match { 
-            // case None => Somente se não encontrar em nenhum escopo
-        // }
+        None
+    else
+        stack.top.get(id) match {
+            case None => None
+            case Some(variable) => Some(variable.value)
+        }
   }
 
   def clear() : Unit = { stack.clear() } 

@@ -110,19 +110,19 @@ class Print(val exp: Expression) extends Command {
     exp.eval() match {
         case IntValue(value) => print(value)
         case BoolValue(value) => print(value)
-        case Undefined()       => print()
+        case Undefined()       => print("")
         case _ => throw new oberon.InvalidArgument("oops a error occurred: Unexpected Value for print()")
     }
   }
 
 }
 // TODO: a chamada do procedimento(comando) e a declaração(interface)
-// procedure id( (id,value)* ) commands
-class Procedure(id: String, val commands: BlockCommand, val param: Expression*){
-    override
-    def run() : Unit = {
-        push()
-        commands.run()
-        pop()
-    }
-}
+// // procedure id( (id,value)* ) commands
+// class Procedure(id: String, val commands: BlockCommand, val param: Expression*){
+//     override
+//     def run() : Unit = {
+//         push()
+//         commands.run()
+//         pop()
+//     }
+// }
