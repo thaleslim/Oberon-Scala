@@ -2,8 +2,6 @@ package oberon.command
 
 import oberon.Environment._
 
-// import oberon.expression._
-
 import oberon.expression.Expression
 import oberon.expression.IntValue
 import oberon.expression.BoolValue

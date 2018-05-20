@@ -12,7 +12,7 @@ case class Undefined() extends Value
 case class IntValue(value: Integer) extends Value
 case class BoolValue(value: Boolean) extends Value
 
-case class Variable() extends Value with Comparable[Variable]{
+case class Variable() extends Value with Ordered[Variable]{
     var valueType: String = "Undefined"
     var value: Value = new Undefined()
 
@@ -41,11 +41,8 @@ case class Variable() extends Value with Comparable[Variable]{
         }
         return this
     }
-    /**
-      * @return a negative integer, zero, or a positive integer as this 
-      * object is less than, equal to, or greater than the specified object.
-      */
-    def compareTo(that: Variable): Int = {
+    
+    def compare(that: Variable): Int = {
         if( !(this.valueType == that.valueType) ) return -1
         else this.value.eval match{
             case Undefined() => that.value.eval match {
@@ -71,5 +68,4 @@ case class Variable() extends Value with Comparable[Variable]{
     }
 
     def equalTo(that: Variable): Boolean = if( this.compareTo(that) == 0 ) true else false
-
 }
