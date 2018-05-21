@@ -121,14 +121,14 @@ class Print(val exp: Expression) extends Command {
 }
 
 // procedure id( (id,value)* ) commands
-class Procedure(val commands: BlockCommand, val param: Expression*){
+class Procedure(val commands: BlockCommand, val param: String*){
     def declare(id: String){
         functions += (id -> this)
     }
     
     def check(that: Tuple2[String,Expression]*): Boolean = {
         if(!that.isEmpty){
-            if( param.indexOf(that.head._2) < 0 )
+            if( param.indexOf(that.head._1) < 0 )
                 return false
             return this.check(that.tail: _*)
         }

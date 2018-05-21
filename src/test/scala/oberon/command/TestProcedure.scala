@@ -71,8 +71,8 @@ class TestProcedure extends FlatSpec with Matchers with GivenWhenThen with Befor
     val d1 = new Declaration("soma")                 // soma;
 
     val a1 = new Assignment("soma", new VarRef("x"))
-    
-    (new Procedure(new BlockCommand(List(a1)), IntValue(5))).declare("assign")
+
+    (new Procedure(new BlockCommand(List(a1)), "x")).declare("assign")
 
     d1.run()
     (new ProcedureCall("assign",("x" -> IntValue(5)))).run()
