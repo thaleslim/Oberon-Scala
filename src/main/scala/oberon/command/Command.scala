@@ -1,11 +1,16 @@
 package oberon.command
 
+import scala.collection.mutable.Stack
+import scala.collection.mutable.Map
+
 import oberon.Environment._
 
+import oberon.expression.Value
 import oberon.expression.Expression
 import oberon.expression.IntValue
 import oberon.expression.BoolValue
 import oberon.expression.Undefined
+import oberon.expression.Variable
 
 trait Command {
   def run() : Unit 
@@ -114,13 +119,51 @@ class Print(val exp: Expression) extends Command {
   }
 
 }
-// TODO: a chamada do procedimento(comando) e a declaração(interface)
-// // procedure id( (id,value)* ) commands
-// class Procedure(id: String, val commands: BlockCommand, val param: Expression*){
-//     override
-//     def run() : Unit = {
-//         push()
-//         commands.run()
-//         pop()
-//     }
-// }
+
+// procedure id( (id,value)* ) commands
+class Procedure(val commands: BlockCommand, val param: Expression*){
+    def declare(id: String){
+        functions += (id -> this)
+    }
+    
+    def check(that: Tuple2[String,Expression]*): Boolean = {
+        if(!that.isEmpty){
+            if( param.indexOf(that.head._2) < 0 )
+                return false
+            return this.check(that.tail: _*)
+        }
+        return true
+    }
+
+}
+
+class ProcedureCall(val id: String, val param: Tuple2[String,Expression]*) extends Command {
+    override
+    def run() : Unit = {
+        functions.get(id) match {
+            case None => throw new oberon.InvalidArgument("Call to undeclared procedure")
+            case Some(procedure) => {
+                if( procedure.check(this.param: _*) )
+                    this.execute(procedure)
+                else throw new oberon.InvalidArgument("Invalid Argument sequence, according to procedure declaration")
+            }
+        }
+    }
+
+    private def loadargs(that: Tuple2[String,Expression]*) : Unit = {
+        if(!that.isEmpty){
+            map( that.head._1, that.head._2.eval() )
+            this.loadargs(that.tail: _*)
+        }
+    }
+
+    private def execute(procedure: Procedure) : Unit = {
+        program.push(new Stack[Map[String, Variable]])
+        
+        this.loadargs(this.param: _*)
+
+        procedure.commands.run
+
+        program.pop()
+    }
+}

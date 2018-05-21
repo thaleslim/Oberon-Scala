@@ -9,7 +9,7 @@ import oberon.expression.Variable
 import oberon.expression.Expression
 
 import oberon.command.Command
-import oberon.command.BlockCommand
+import oberon.command.Procedure
 
 object Environment {
   // A program is a stack of functions scopes 
@@ -17,16 +17,14 @@ object Environment {
   // that have its own set of variables
   var program   = new Stack[Stack[Map[String, Variable]]]()
   var global:    Map[String,Variable]        = new HashMap[String, Variable]()
-  var functions: Map[String,BlockCommand]    = new HashMap[String, BlockCommand]()
+  var functions: Map[String,Procedure]       = new HashMap[String, Procedure]()
 
   // Gets the current scope
-  def current() = {
+  private def current() = {
     if( program.isEmpty )
         program.push(new Stack[Map[String, Variable]])
     program.top
   }
-
-  def stack() = current()
 
   def push() {
     current.push(new HashMap[String, Variable]())
@@ -38,7 +36,7 @@ object Environment {
 
   def map(id: String, value: Value) {
     if( program.isEmpty ) //Global Variable
-        global += ( id -> (new Variable)(value) )
+        global += ( id -> new Variable(value) )
     else{
         if( current.isEmpty )
             push()
