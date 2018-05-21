@@ -28,9 +28,9 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
   // or ...
   // for(soma := 0, x := 1; x < 11; {x++; soma := soma + x;})
   it should "lookup(soma) must be equal to 55 after a loop summing up 1 to 10" in {
-    val d1 = new Declaration("soma")                 // soma;
-    val a1 = new Assignment("soma", IntValue(0))     // soma := 0;
-    val a2 = new Assignment("x", IntValue(1))        //    x := 1;
+    val d1 = new Declaration("soma", new IntValue(32))  // soma;
+    val a1 = new Assignment("soma", IntValue(0))        // soma := 0;
+    val a2 = new Assignment("x", IntValue(1))           //    x := 1;
     val a3 = new Assignment("soma",new AddExpression(new VarRef("soma"), new VarRef("x")))
     val a4 = new Assignment("x", new AddExpression(new VarRef("x"), IntValue(1)))
     val cond = new SlExpression(new VarRef("x"), IntValue(11))
@@ -53,7 +53,7 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
   }
 
   it should "show (x == 10) after for(x := 0; x < 10; x++)" in{
-    val d1 = new Declaration("x")                                                   //x;
+    val d1 = new Declaration("x", new IntValue(32))                                 //x;
     val a1 = new Assignment("x",IntValue(0))                                        //x := 0;
     val a2 = new Assignment("x",new AddExpression(new VarRef("x"),IntValue(1)))     //x++;
     val cond = new SlExpression(new VarRef("x"),IntValue(10))                       //x < 10
@@ -70,7 +70,7 @@ class TestFor extends FlatSpec with Matchers with GivenWhenThen with BeforeAndAf
   }
   
   it should "show (x == 1) after for(x := 10; x > 1; x--)" in{
-    val d1 = new Declaration("x")                                                     //x;
+    val d1 = new Declaration("x", new IntValue(32))                                   //x;
     val a1 = new Assignment ("x",IntValue(10))                                        //x := 10;
     val a2 = new Assignment ("x", new SubExpression(new VarRef("x"),IntValue(1)))     //x--;
     val cond = new SgExpression(new VarRef("x"),IntValue(1))                          //x > 1

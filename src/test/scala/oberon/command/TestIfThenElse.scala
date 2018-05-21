@@ -27,7 +27,7 @@ class TestIfThenElse extends FlatSpec with Matchers with GivenWhenThen with Befo
   // end
   // print(soma);  
   it should "lookup(x) must be equal to 1 after a IfThenElse with a true condition" in {
-    val a1 = new Declaration("x")                    //    x;
+    val a1 = new Declaration("x", new IntValue(32))  //    x;
     val a2 = new Assignment("x", IntValue(1))        //    x := 1;
     val a3 = new Assignment("x", IntValue(2))        //    x := 2;
     val cond = new EqExpression(IntValue(1), IntValue(1))

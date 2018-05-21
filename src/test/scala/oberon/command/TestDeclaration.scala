@@ -19,10 +19,10 @@ class TestDeclaration extends FlatSpec with Matchers with GivenWhenThen with Bef
   before {
     clear()
   }
-  // x;
+  // x: Int;
   // print(x) 
   it should "lookup(x) == Undefined()" in {
-    val a1 = new Declaration("x")    //    x;
+    val a1 = new Declaration("x", new IntValue(32))    //    x;
     a1.run()
     val res = lookup("x")
     res match {

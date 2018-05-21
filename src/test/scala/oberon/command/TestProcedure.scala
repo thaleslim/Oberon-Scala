@@ -34,10 +34,10 @@ class TestProcedure extends FlatSpec with Matchers with GivenWhenThen with Befor
   // or ...
   // for(soma := 0, x := 1; x < 11; {x++; soma := soma + x;})
   it should "lookup(soma) must be equal to 55 after a loop summing up 1 to 10" in {
-    val d1 = new Declaration("soma")                 // soma;
+    val d1 = new Declaration("soma", new IntValue(32)) // soma;
     
-    val a1 = new Assignment("soma", IntValue(0))     // soma := 0;
-    val a2 = new Assignment("x", IntValue(1))        //    x := 1;
+    val a1 = new Assignment("soma", IntValue(0))       // soma := 0;
+    val a2 = new Assignment("x", IntValue(1))          //    x := 1;
     val a3 = new Assignment("soma",new AddExpression(new VarRef("soma"), new VarRef("x")))
     val a4 = new Assignment("x", new AddExpression(new VarRef("x"), IntValue(1)))
     val cond = new SlExpression(new VarRef("x"), IntValue(11))
@@ -68,14 +68,14 @@ class TestProcedure extends FlatSpec with Matchers with GivenWhenThen with Befor
   // end
   //
   it should "Assign the Value from the Argument X to the Global Variable Sum" in {
-    val d1 = new Declaration("soma")                 // soma;
+    val d1 = new Declaration("soma", new IntValue(32)) // soma;
 
-    val a1 = new Assignment("soma", new VarRef("x")) // soma := x;
+    val a1 = new Assignment("soma", new VarRef("x"))   // soma := x;
 
     (new Procedure(new BlockCommand(List(a1)), ("x" -> new Variable("Int")))).declare("assign") // procedure assign(x: Int)
 
     d1.run()
-    (new ProcedureCall("assign",("x" -> (new Variable)(IntValue(5))))).run()
+    (new ProcedureCall("assign",("y" -> (new Variable)(IntValue(5))))).run()
 
     val sum = lookup("soma")
     sum match {

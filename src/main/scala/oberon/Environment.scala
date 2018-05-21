@@ -43,7 +43,11 @@ object Environment {
         
         if( exist(id) ) {
             if( !global.isEmpty ) global.get(id) match {
-                case Some(thing) => global += ( id -> (new Variable)(value) )
+                case Some(thing) => {
+                    var that = (new Variable)(value)
+                    if( thing.evaluate(that) )
+                        global += ( id -> that )
+                    else throw new oberon.InvalidArgument("Assignment: Different types between declaration and argument")}
                 case None => update(id,value) }
             else update(id,value) }
         else current.top += (id -> (new Variable)(value) )
@@ -54,8 +58,14 @@ object Environment {
     var it = current.iterator
     var map: Map[String,Variable] = null
     it.foreach{ target: Map[String, Variable] => if( map == null && target.get(id) != None ){ map = target }}
-    if( map != null )
-        map += ( id -> (new Variable)(value) )
+    if( map != null ) map.get(id) match{
+        case Some(variable) => { 
+            var that = (new Variable)(value);
+            if( variable.evaluate(that) )
+                map += ( id -> (new Variable)(value) )
+            else throw new oberon.InvalidArgument("Assignment: Different types between declaration and argument")}
+        case None => {}
+    }
   }
 
   def lookup(id: String, force: Boolean = true) : Option[Value] = {

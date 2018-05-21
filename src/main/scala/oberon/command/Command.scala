@@ -22,12 +22,28 @@ class BlockCommand(val cmds: List[Command]) extends Command {
     cmds.foreach(c => c.run())
   }
 }
-// TODO: improve link var <-> type
-class Declaration(val id: String) extends Command {
+// TODO: improve link var <-> type // TODO: fix link
+class Declaration(val id: String, val dataType: Value) extends Command {
   override
   def run() : Unit = {
     if( exist(id) ) throw new oberon.InvalidArgument("Double Declaration")
-    map(id, new Undefined())
+    map(id, dataType)
+   
+//   def map(id: String, value: Value) {
+//     if( program.isEmpty ) //Global Variable
+//         global += ( id -> (new Variable)(value) )
+//     else{
+//         if( current.isEmpty )
+//             push()
+        
+//         if( exist(id) ) {
+//             if( !global.isEmpty ) global.get(id) match {
+//                 case Some(thing) => global += ( id -> (new Variable)(value) )
+//                 case None => update(id,value) }
+//             else update(id,value) }
+//         else current.top += (id -> (new Variable)(value) )
+//     }
+//   }
   }
 }
 
@@ -126,15 +142,31 @@ class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*)
         functions += (id -> this)
     }
     
-    def check( that: Tuple2[String,Variable]* ): Boolean = {
+    private def tryout(passed: Integer, that: Tuple2[String,Variable]* ): Boolean = {
         if( !that.isEmpty ) {
-            if( param.find{tuple: Tuple2[String,Variable] => if(that.head._1 == tuple._1 && that.head._2.evaluate(tuple._2)) true else false } == None )
+            var temp: Tuple2[String,Variable] = null
+            if( param.find{tuple: Tuple2[String,Variable] => if(that.head._2.evaluate(tuple._2)){ temp = tuple; true } else false } == None
+             && param.indexOf(temp) != (that.indexOf(that.head) + passed) )
                 return false
-            return this.check(that.tail: _*)
+            return this.tryout(passed + 1, that.tail: _*)
         }
         return true
     }
 
+    def check(args: Tuple2[String,Variable]* ): Boolean = 
+        if( ( args.isEmpty && param.isEmpty ) || ( !args.isEmpty && !param.isEmpty ) )
+            return this.tryout(0, args: _*)
+        else
+            return false
+
+    // TODO: Gabriel Santo para trote 2018.2
+
+    def loadargs(that: Tuple2[String,Variable]*) : Unit = {
+        var temp = param.toList
+        var index: Integer = 0
+        temp.foreach{ tuple: Tuple2[String,Variable] => map( tuple._1, new Undefined() ) }
+        that.toList.foreach{ tuple: Tuple2[String,Variable] => { map( temp(index)._1, tuple._2.eval() ); index += 1 } }
+    }
 }
 
 class ProcedureCall(val id: String, val param: Tuple2[String,Variable]*) extends Command {
@@ -150,17 +182,17 @@ class ProcedureCall(val id: String, val param: Tuple2[String,Variable]*) extends
         }
     }
 
-    private def loadargs(that: Tuple2[String,Variable]*) : Unit = {
-        if(!that.isEmpty){
-            map( that.head._1, that.head._2.eval() )
-            this.loadargs(that.tail: _*)
-        }
-    }
+    // private def loadargs(that: Tuple2[String,Variable]*) : Unit = {
+    //     if(!that.isEmpty){
+    //         map( that.head._1, that.head._2.eval() )
+    //         this.loadargs(that.tail: _*)
+    //     }
+    // }
 
     private def execute(procedure: Procedure) : Unit = {
         program.push(new Stack[Map[String, Variable]])
         
-        this.loadargs(this.param: _*)
+        procedure.loadargs(this.param: _*)
 
         procedure.commands.run
 
