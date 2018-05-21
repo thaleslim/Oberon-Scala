@@ -8,7 +8,7 @@ import org.scalatest.BeforeAndAfter
 
 import oberon.Environment._
 
-import oberon.expression.IntValue
+//import oberon.expression.IntValue
 import oberon.expression._
 import oberon.command._
 
@@ -70,12 +70,12 @@ class TestProcedure extends FlatSpec with Matchers with GivenWhenThen with Befor
   it should "Assign the Value from the Argument X to the Global Variable Sum" in {
     val d1 = new Declaration("soma")                 // soma;
 
-    val a1 = new Assignment("soma", new VarRef("x"))
+    val a1 = new Assignment("soma", new VarRef("x")) // soma := x;
 
-    (new Procedure(new BlockCommand(List(a1)), "x")).declare("assign")
+    (new Procedure(new BlockCommand(List(a1)), ("x" -> new Variable("Int")))).declare("assign") // procedure assign(x: Int)
 
     d1.run()
-    (new ProcedureCall("assign",("x" -> IntValue(5)))).run()
+    (new ProcedureCall("assign",("x" -> (new Variable)(IntValue(5))))).run()
 
     val sum = lookup("soma")
     sum match {

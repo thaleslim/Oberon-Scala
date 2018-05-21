@@ -12,40 +12,45 @@ case class Undefined() extends Value
 case class IntValue(value: Integer) extends Value
 case class BoolValue(value: Boolean) extends Value
 
-case class Variable( var value: Value = new Undefined(), var valueType: String = "Undefined" ) extends Value with Ordered[Variable]{
+case class Variable( var valueType: String = "Undefined", var value: Value = new Undefined() ) extends Value with Ordered[Variable]{
 
-    def apply(info: Value): Variable = this.assign(info)
+    override 
+    def eval() = this.value
 
-    def assign(info: Value): Variable = {
+    def apply     (info: Value)   : Variable = this.assign(info)
+
+    def assign    (info: Value)   : Variable = {
         info.eval match {
-            case IntValue(value) =>
+            case IntValue(value) => 
                 if( this.valueType == "Undefined" ){
                     this.value = new IntValue(value)
-                    this.valueType  = "Int" }
-                else if ( this.valueType == "Int" )
+                    this.valueType  = "Int"}
+                else if( this.valueType == "Int" )
                     this.value = new IntValue(value)
-                else throw new oberon.InvalidArgument("Invalid Type")
+                else throw new oberon.InvalidArgument("Assign: Invalid Type")
 
             case BoolValue(value) =>
                 if( this.valueType == "Undefined" ){
                     this.value = new BoolValue(value)
-                    this.valueType  = "Bool";}
-                else if ( this.valueType == "Bool" )
+                    this.valueType  = "Bool"}
+                if( this.valueType == "Bool" )
                     this.value = new BoolValue(value)
-                else throw new oberon.InvalidArgument("Invalid Type")
+                else throw new oberon.InvalidArgument("Assign: Invalid Type")
 
             case Undefined() => 
                 if( this.valueType == "Undefined" )
                     this.value = new Undefined()
-                else throw new oberon.InvalidArgument("Invalid Type")
+                else throw new oberon.InvalidArgument("Assign: Invalid Type")
             
-            case _ => throw new  oberon.InvalidArgument("Unexpected Type")
+            case _ => throw new  oberon.InvalidArgument("Assign: Unexpected Type")
         }
         return this
     }
     
-    def compare(that: Variable): Int = {
-        if( !(this.valueType == that.valueType) ) return -1
+    def evaluate  (that: Variable): Boolean = { this.valueType == that.valueType }
+
+    def compare   (that: Variable): Int = {
+        if( !this.evaluate(that) ) return -1
         else this.value.eval match{
             case Undefined() => that.value.eval match {
                 case Undefined() => return 0
@@ -66,8 +71,9 @@ case class Variable( var value: Value = new Undefined(), var valueType: String =
                     else return 1
                 case _ => return -1
             }
+            case _ => throw new oberon.InvalidArgument("Compare: Unexpected Type")
         }
     }
 
-    def equalTo(that: Variable): Boolean = if( this.compareTo(that) == 0 ) true else false
+    def equalTo   (that: Variable): Boolean = if( this.compareTo(that) == 0 ) true else false
 }

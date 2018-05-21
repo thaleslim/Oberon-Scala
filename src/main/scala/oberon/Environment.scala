@@ -36,7 +36,7 @@ object Environment {
 
   def map(id: String, value: Value) {
     if( program.isEmpty ) //Global Variable
-        global += ( id -> new Variable(value) )
+        global += ( id -> (new Variable)(value) )
     else{
         if( current.isEmpty )
             push()

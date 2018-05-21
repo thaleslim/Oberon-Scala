@@ -22,7 +22,7 @@ class BlockCommand(val cmds: List[Command]) extends Command {
     cmds.foreach(c => c.run())
   }
 }
-
+// TODO: improve link var <-> type
 class Declaration(val id: String) extends Command {
   override
   def run() : Unit = {
@@ -121,14 +121,14 @@ class Print(val exp: Expression) extends Command {
 }
 
 // procedure id( (id,value)* ) commands
-class Procedure(val commands: BlockCommand, val param: String*){
+class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*){
     def declare(id: String){
         functions += (id -> this)
     }
     
-    def check(that: Tuple2[String,Expression]*): Boolean = {
-        if(!that.isEmpty){
-            if( param.indexOf(that.head._1) < 0 )
+    def check( that: Tuple2[String,Variable]* ): Boolean = {
+        if( !that.isEmpty ) {
+            if( param.find{tuple: Tuple2[String,Variable] => if(that.head._1 == tuple._1 && that.head._2.evaluate(tuple._2)) true else false } == None )
                 return false
             return this.check(that.tail: _*)
         }
@@ -137,7 +137,7 @@ class Procedure(val commands: BlockCommand, val param: String*){
 
 }
 
-class ProcedureCall(val id: String, val param: Tuple2[String,Expression]*) extends Command {
+class ProcedureCall(val id: String, val param: Tuple2[String,Variable]*) extends Command {
     override
     def run() : Unit = {
         functions.get(id) match {
@@ -150,7 +150,7 @@ class ProcedureCall(val id: String, val param: Tuple2[String,Expression]*) exten
         }
     }
 
-    private def loadargs(that: Tuple2[String,Expression]*) : Unit = {
+    private def loadargs(that: Tuple2[String,Variable]*) : Unit = {
         if(!that.isEmpty){
             map( that.head._1, that.head._2.eval() )
             this.loadargs(that.tail: _*)
