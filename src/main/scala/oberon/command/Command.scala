@@ -176,15 +176,13 @@ class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*)
 
 class ProcedureCall(val id: String, val param: Expression*) extends Command {
     override
-    def run() : Unit = {
-        functions.get(id) match {
-            case None => throw new oberon.InvalidArgument("Call to undeclared procedure")
-            case Some(procedure) => {
-                //param.toList.foreach{x: Expression => print(x.eval())}
-                if( procedure.check(this.param: _*) )
-                    this.execute(procedure)
-                else throw new oberon.InvalidArgument("Invalid Argument sequence, according to procedure declaration")
-            }
+    def run() : Unit = functions.get(id) match {
+        case None => throw new oberon.InvalidArgument("Call to undeclared procedure")
+        case Some(procedure) => {
+            //param.toList.foreach{x: Expression => print(x.eval())}
+            if( procedure.check(this.param: _*) )
+                this.execute(procedure)
+            else throw new oberon.InvalidArgument("Invalid Argument sequence, according to procedure declaration")
         }
     }
 
