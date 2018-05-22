@@ -75,11 +75,40 @@ class TestProcedure extends FlatSpec with Matchers with GivenWhenThen with Befor
     (new Procedure(new BlockCommand(List(a1)), ("x" -> new Variable("Int")))).declare("assign") // procedure assign(x: Int)
 
     d1.run()
-    (new ProcedureCall("assign",("y" -> (new Variable)(IntValue(5))))).run()
+    ( new ProcedureCall( "assign", (new Variable)(IntValue(5)) ) ).run()
 
     val sum = lookup("soma")
     sum match {
       case Some(v) => v.eval() should be (IntValue(5))
+      case _       => -1 should be (0)  
+    }
+  }
+//    soma: Int;
+
+//    procedure sum2(x: Int, y: Int)
+//    begin
+//         soma := x + y;
+//    end
+
+//    begin
+//         y: Int := 5;
+//         z: Int := 3;
+//         call sum2(y,z);
+//         print(soma);
+//    end
+  it should "Update the variable soma with the result from the sum of the values from y 'n z" in {
+    val d1 = new Declaration("soma", new IntValue(32))                                      // soma;
+
+    val a1 = new Assignment("soma", new AddExpression( new VarRef("x"), new VarRef("y")))   // soma := x + y;
+
+    (new Procedure(new BlockCommand(List(a1)), ("x" -> new Variable("Int")), ("y" -> new Variable("Int")))).declare("sum2") // procedure sum2(x: Int, y: Int)
+
+    d1.run()
+    ( new ProcedureCall( "sum2", (new Variable)(IntValue(5)), IntValue(3) ) ).run()
+
+    val sum = lookup("soma")
+    sum match {
+      case Some(v) => v.eval() should be (IntValue(8))
       case _       => -1 should be (0)  
     }
   }

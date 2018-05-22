@@ -68,6 +68,7 @@ object Environment {
     }
   }
 
+  //Escopo Global tem prioridade ao escopo mais interno 
   def lookup(id: String, force: Boolean = true) : Option[Value] = {
     if( ( program.isEmpty || current.isEmpty ) && global.isEmpty )
         None

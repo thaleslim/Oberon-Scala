@@ -12,6 +12,7 @@ case class Undefined() extends Value
 case class IntValue(value: Integer) extends Value
 case class BoolValue(value: Boolean) extends Value
 
+// valueType 'n value are only visible for debugging purposes, avoid as much as possible using them directly!!!
 case class Variable( var valueType: String = "Undefined", var value: Value = new Undefined() ) extends Value with Ordered[Variable]{
 
     override 
@@ -47,6 +48,8 @@ case class Variable( var valueType: String = "Undefined", var value: Value = new
         return this
     }
     
+    def evaluate  (that: Value): Boolean = this.evaluate( (new Variable)(that) ) 
+
     def evaluate  (that: Variable): Boolean = if(this.valueType == "Undefined") true else this.valueType == that.valueType
 
     def compare   (that: Variable): Int = {
