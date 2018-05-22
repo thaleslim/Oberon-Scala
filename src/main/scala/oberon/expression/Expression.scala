@@ -47,7 +47,7 @@ case class Variable( var valueType: String = "Undefined", var value: Value = new
         return this
     }
     
-    def evaluate  (that: Variable): Boolean = { this.valueType == that.valueType }
+    def evaluate  (that: Variable): Boolean = if(this.valueType == "Undefined") true else this.valueType == that.valueType
 
     def compare   (that: Variable): Int = {
         if( !this.evaluate(that) ) return -1

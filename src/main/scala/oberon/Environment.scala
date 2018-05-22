@@ -20,7 +20,7 @@ object Environment {
   var functions: Map[String,Procedure]       = new HashMap[String, Procedure]()
 
   // Gets the current scope
-  private def current() = {
+  def current() = {
     if( program.isEmpty )
         program.push(new Stack[Map[String, Variable]])
     program.top

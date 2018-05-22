@@ -22,28 +22,28 @@ class BlockCommand(val cmds: List[Command]) extends Command {
     cmds.foreach(c => c.run())
   }
 }
-// TODO: improve link var <-> type // TODO: fix link
+
 class Declaration(val id: String, val dataType: Value) extends Command {
   override
   def run() : Unit = {
     if( exist(id) ) throw new oberon.InvalidArgument("Double Declaration")
-    map(id, dataType)
-   
-//   def map(id: String, value: Value) {
-//     if( program.isEmpty ) //Global Variable
-//         global += ( id -> (new Variable)(value) )
-//     else{
-//         if( current.isEmpty )
-//             push()
-        
-//         if( exist(id) ) {
-//             if( !global.isEmpty ) global.get(id) match {
-//                 case Some(thing) => global += ( id -> (new Variable)(value) )
-//                 case None => update(id,value) }
-//             else update(id,value) }
-//         else current.top += (id -> (new Variable)(value) )
-//     }
-//   }
+    // map(id, dataType)
+    var dataName: String = "Undefined"
+
+    dataType.eval() match {
+        case IntValue(value)  => dataName = "Int"
+        case BoolValue(value) => dataName = "Bool"
+        case Undefined()      => throw new oberon.InvalidArgument("Declaration: Invalid Variable Type")
+        case _ => throw new oberon.InvalidArgument("Declaration: oops unexpected")
+    }
+    
+    if( program.isEmpty )
+        global += ( id -> new Variable(dataName) )
+    else{
+        if( current.isEmpty )
+            push()
+        current.top += (id -> new Variable(dataName) )
+    }
   }
 }
 
@@ -164,7 +164,7 @@ class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*)
     def loadargs(that: Tuple2[String,Variable]*) : Unit = {
         var temp = param.toList
         var index: Integer = 0
-        temp.foreach{ tuple: Tuple2[String,Variable] => map( tuple._1, new Undefined() ) }
+        temp.foreach{ tuple: Tuple2[String,Variable] => map(tuple._1, new Undefined()) }
         that.toList.foreach{ tuple: Tuple2[String,Variable] => { map( temp(index)._1, tuple._2.eval() ); index += 1 } }
     }
 }
@@ -199,3 +199,9 @@ class ProcedureCall(val id: String, val param: Tuple2[String,Variable]*) extends
         program.pop()
     }
 }
+
+
+// TODO: return é um comando e a função é uma 
+// expressão: resultado de eval vem da executa
+// todo o bloco e o eval da expressão argumento
+// do comando return 
