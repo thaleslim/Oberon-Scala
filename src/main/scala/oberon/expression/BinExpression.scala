@@ -7,7 +7,7 @@ package oberon.expression
 abstract class BinExpression(val lhs: Expression, val rhs: Expression) extends Expression {
 }
 
-/** Sum ( + ) representation.
+/** sum ( + ) representation.
 
   * Adds two expression' values.
   */
@@ -83,49 +83,40 @@ class ModExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
     }
 }
 
-/** < representation 
+/** Strictly greater than ( > ) representation.
   
-  * Strict Inequality: Greater Than
+  * Strict Inequality Expression
   */
 class SgExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
-  override
-  def eval: Value = {
-    var lessEqual: LeExpression = new LeExpression(lhs,rhs)
-    if( lessEqual.eval == BoolValue(true) )
-        return BoolValue(false)
-    else
-        return BoolValue(true)
-  }
+    /** lhs > that == !(lhs <= rhs) */
+    override def eval: Value = 
+        if( (new LeExpression(lhs,rhs)).eval == BoolValue(true) ) BoolValue(false) else BoolValue(true)
 
 }
 
-/** Strict Inequality: Less Than */
+/** Strictly less than ( < ) representation. 
+  
+  * Strict Inequality Expression
+  */
 class SlExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
-  override
-  def eval: Value = {
-    var greaterEqual: GeExpression = new GeExpression(lhs,rhs)
-    if( greaterEqual.eval == BoolValue(true) )
-        return BoolValue(false)
-    else
-        return BoolValue(true)
-  }
+    /** this < that == !(lhs >= rhs) */
+    override def eval: Value =
+        if( (new GeExpression(lhs,rhs)).eval == BoolValue(true) ) BoolValue(false) else BoolValue(true)
 
 }
-/** Inequality Expression: Greater than or Equal to */
+
+/** Greater than or Equal to ( >= ) representation. */
 class GeExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
-  override
-  def eval: Value = {
-    val v1 = lhs.eval().asInstanceOf[IntValue].value
-    val v2 = rhs.eval().asInstanceOf[IntValue].value
-
-    return BoolValue(v1 >= v2)
-  }
+    /** lhs >= rhs */
+    override def eval: Value = 
+        BoolValue( lhs.eval().asInstanceOf[IntValue].value >= rhs.eval().asInstanceOf[IntValue].value )
 
 }
 
+/** Less than or Equal to ( <= ) representation. */
 class LeExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
     /** lhs <= rhs */
@@ -134,14 +125,15 @@ class LeExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, 
 
 }
 
+/** Equal to ( == ) representation. */
 class EqExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
-    /** */
+    
+    /** lhs == rhs */
     override def eval: Value = BoolValue( lhs.eval == rhs.eval ) 
 
 }
 
-/** Not Equal ( != ) representation
-  */
+/** Not Equal ( != ) representation. */
 class NeqExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
     
     /** lhs != rhs */
@@ -150,25 +142,24 @@ class NeqExpression(lhs: Expression, rhs: Expression) extends BinExpression(lhs,
 
 }
 
+/** and ( && ) representation. */
 class AND_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
+    /** lhs && rhs */
     override def eval() : Value =
-        BoolValue( lhs.eval().asInstanceOf[BoolValue].value && rhs.eval().asInstanceOf[BoolValue].value)
+        BoolValue( lhs.eval().asInstanceOf[BoolValue].value && rhs.eval().asInstanceOf[BoolValue].value )
 }
 
+/** or ( || ) representation. */
 class OR_Expression(lhs: Expression, rhs: Expression) extends BinExpression(lhs, rhs) {
 
-  override
-  def eval() : Value = {
-    val v1 : BoolValue = lhs.eval().asInstanceOf[BoolValue]
-    val v2 : BoolValue = rhs.eval().asInstanceOf[BoolValue]
-
-    return new BoolValue(v1.value || v2.value)
-  }
+    override def eval() : Value = 
+        BoolValue( lhs.eval().asInstanceOf[BoolValue].value || rhs.eval().asInstanceOf[BoolValue].value )
 }
 
-class NOT_Expression(v1: Expression) extends Expression {
+/** not ( ! ) representation. */
+class NOT_Expression(expression: Expression) extends Expression {
 
-  override
-  def eval() : Value = new BoolValue( ! v1.eval().asInstanceOf[BoolValue].value )
+    /** !expression */
+    override def eval() : Value = BoolValue( !expression.eval().asInstanceOf[BoolValue].value )
 }

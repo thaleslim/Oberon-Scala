@@ -1,18 +1,32 @@
 package oberon.expression
 
+/** A expression representation.
+  
+  * A expression can, by definition, be reduced to a value
+  */
 trait Expression {
-  def eval(): Value 
+  def eval(): Value
 }
 
+/** A generic value representation. */
 trait Value extends Expression {
   def eval() = this 
 }
 
+/** A Undefined value representation.
+  
+  * @note It's used as a default value
+  */
 case class Undefined() extends Value 
+/** A Int value representation. */
 case class IntValue(value: Integer) extends Value
+/** A Boolean value representation. */
 case class BoolValue(value: Boolean) extends Value
 
-// valueType 'n value are only visible for debugging purposes, avoid as much as possible using them directly!!!
+/** A variable representation.
+
+  * @note this' valueType 'n value are only visible for debugging purposes, avoid as much as possible using them directly!!!
+  */
 case class Variable( var valueType: String = "Undefined", var value: Value = new Undefined() ) extends Value with Ordered[Variable]{
 
     override 
