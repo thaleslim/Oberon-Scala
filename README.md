@@ -10,6 +10,9 @@ TODOs:
  - [ ] FunctionsDeclaration(Class) && FunctionsCall(Expression):
  
  * Needs a way to connect the name to the CommandBlock, Map structure.
+ * Hint: unlock the access to CommandBlock' commands to 
+   be able to evaluate if it's a return command, to
+   help with FunctionsCall' eval method.
 
  - [ ] ReadInt && ReadBool:
  
@@ -17,8 +20,26 @@ TODOs:
 
  - [ ] Print:
 
- * Possible types expansion (String)
+ * Possible types expansion (String).
+
+ - [ ] Declaration:
+
+ * Improve method' arguments usability.
+
+ - [ ] CommandBlock:
+
+ * Use Sequences instead of Lists.
+
+ - [ ] Design decision:
+
+ * "Brackets" (begin [...] end) should be obrigatory?
+
+ - [ ] Procedure:
+
+ * Review Hierarchy and Class' acess.
 
  - [ ] Exceptions:
  
  * Create more Exceptions, like InvalidArgument, to have a more direct Error Message.
+
+ - [ ] Review identation in Command.scala

@@ -2,15 +2,15 @@ package oberon.expression
 
 /** A expression representation.
   
-  * A expression can, by definition, be reduced to a value
+  * This should, by definition, be able to be reduced to a value.
   */
 trait Expression {
-  def eval(): Value
+    def eval(): Value
 }
 
 /** A generic value representation. */
 trait Value extends Expression {
-  def eval() = this 
+    def eval() = this 
 }
 
 /** A Undefined value representation.

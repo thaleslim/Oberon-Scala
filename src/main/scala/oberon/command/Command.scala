@@ -12,17 +12,25 @@ import oberon.expression.BoolValue
 import oberon.expression.Undefined
 import oberon.expression.Variable
 
+/** A command representation.
+  
+  * This should, by definition, be able to run properly.
+  */
 trait Command {
   def run() : Unit 
 }
 
+// TODO: Use a Seq instead of a List
+/** begin [...] end */
 class BlockCommand(val cmds: List[Command]) extends Command {
   override
   def run() : Unit = {
     cmds.foreach(c => c.run())
   }
 }
-// TODO: could receive a String instead as a arg
+
+// TODO: Declaration could receive a String as a arg instead of a Value
+/** id: type */
 class Declaration(val id: String, val dataType: Value) extends Command {
   override
   def run() : Unit = {
@@ -46,6 +54,7 @@ class Declaration(val id: String, val dataType: Value) extends Command {
   }
 }
 
+/** id := Value || Expression */
 class Assignment(val id: String, val expression: Expression) extends Command {
 
   override
@@ -56,12 +65,11 @@ class Assignment(val id: String, val expression: Expression) extends Command {
 
 }
 
+// TODO: Arguments should receive a CommanBlock ... or not?
+/** while(cond) do begin [...] end || while(cond) do command */
 class While(val cond: Expression, val command: Command) extends Command {
   override
   def run() : Unit = {
-    // println("Condicao:" + cond)
-    // println("Environment: ")
-    // println(stack)
 
     val v = cond.eval.asInstanceOf[BoolValue]
 
@@ -72,7 +80,10 @@ class While(val cond: Expression, val command: Command) extends Command {
   }
 }
 
-//    for(command;cond;command)
+// TODO: Same design decision as While: Command or CommandBlock
+/* AskTeacher: Should the abstraction integrate the for declare commands along with it's commands or should it be split? 
+    A.K.A for( command; cond; command) command || for( command; cond; command ) */
+/** for( command; cond; command ) begin [...] end && for( command; cond; command) command */
 class For(var previous: Command, cond: Expression, command: Command) extends While(cond,command) {
   override
   def run() : Unit = {
@@ -90,9 +101,9 @@ class For(var previous: Command, cond: Expression, command: Command) extends Whi
     pop()
   }
 }
-/**
-    If(cond) Then command
-  */
+
+// TODO: Same design decision as For: Command or CommandBlock
+/** if(cond) then command || if(cond) then begin [...] end */
 class IfThen(val cond: Expression, val command: Command) extends Command {
   override
   def run() : Unit = {
@@ -105,9 +116,11 @@ class IfThen(val cond: Expression, val command: Command) extends Command {
     }
   }
 }
-/**
-    If(cond) Then commandTrue
-    else          commandFalse
+
+// TODO: Same design decision as IfThen: Command or CommandBlock
+/** if(cond) then command else command
+    or
+    if(cond) then begin [...] end else begin [...] end
   */
 class IfThenElse( cond: Expression, commandTrue: Command, val commandFalse: Command) extends IfThen(cond,commandTrue) {
   override
@@ -122,6 +135,7 @@ class IfThenElse( cond: Expression, commandTrue: Command, val commandFalse: Comm
   }
 }
 
+/** print( Expression )*/
 class Print(val exp: Expression) extends Command {
   override
   def run() : Unit = {
@@ -135,7 +149,9 @@ class Print(val exp: Expression) extends Command {
 
 }
 
+// TODO: review hierarchy and relation of this with environment: does it know too much?
 // procedure id( (id,value)* ) commands
+/** procedure id( arguments ) begin [...] end */
 class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*){
     def declare(id: String){
         functions += (id -> this)
@@ -174,6 +190,7 @@ class Procedure(val commands: BlockCommand, val param: Tuple2[String,Variable]*)
     }
 }
 
+/** call id */
 class ProcedureCall(val id: String, val param: Expression*) extends Command {
     override
     def run() : Unit = functions.get(id) match {
@@ -198,7 +215,4 @@ class ProcedureCall(val id: String, val param: Expression*) extends Command {
 }
 
 
-// TODO: return é um comando e a função é uma 
-// expressão: resultado de eval vem da executa
-// todo o bloco e o eval da expressão argumento
-// do comando return 
+// TODO: Declaração de função(Class) && Return(Command) && Chamada de Função(Expressão)
