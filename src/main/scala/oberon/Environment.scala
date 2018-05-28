@@ -78,9 +78,8 @@ object Environment {
                 else current.top.get(id) match {
                 case None => {
                     if(!force) None
-                    var it = current.iterator
                     var res: Option[Variable] = None
-                    it.foreach{ map: Map[String, Variable] => if(res == None){res = map.get(id)}}
+                    current.iterator.foreach{ map: Map[String, Variable] => if(res == None) res = map.get(id) }
                     res match {
                         case Some(variable) => Some(variable.value)
                         case None => None
